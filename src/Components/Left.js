@@ -168,7 +168,7 @@ const Left = (props) => {
       <h3 className="mt-5">Friends</h3>
       {frndData.map((items,i) => (
         <ListGroup key={i}>
-        {items.JReqAcceptKorse == auth.currentUser.uid
+        {items.JReqAcceptKorse !== auth.currentUser
         ?
         <ListGroup.Item style={active == items.JReqDise ? act : noAct} onClick={() => handleActive(items.JReqDise)}>
         <Row><Col md={4}>
