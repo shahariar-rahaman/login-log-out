@@ -4,19 +4,41 @@ import "react-toastify/dist/ReactToastify.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "../firebaseConfig";
+import Left from "./Left";
+import Middle from "./Middle";
+import Right from "./Right";
 import { getAuth, signOut,onAuthStateChanged } from "firebase/auth";
-import { Container,Alert } from "react-bootstrap";
+import { Container,Alert, Row,Col } from "react-bootstrap";
+import {
+  Button
+} from "react-bootstrap";
 
 const Home = () => {
+  let [userName,updateUser]=useState("")
   let navigate = useNavigate();
-  let [value, uValue] = useState(true);
+  let [time,updateTime] = useState("")
+  let [img,upImg] = useState("");
+  let [userId, upUserId] = useState("");
+  let [email,upEmail]=useState("")
   let { state } = useLocation();
   const auth = getAuth();
-  let [verify,verifyValue]=useState(false)
+  let [verify,verifyValue]=useState(true) 
   const notify = () => toast("Log Out Sccuessfully");
+  const notify2 = () => toast(state)
+  // let loadPage=()=>{
+  //   notify2()
+  // }
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      if(user.emailVerified){
+    // console.log(user)
+      upUserId(user.uid)
+      updateTime(user.metadata.creationTime)
+      updateUser(user.displayName)
+      upImg(user.photoURL)
+      upEmail(user.email)
+      // console.log(user.photoURL)
+    // console.log(user)
+      if(user.emailVerified == true){   
         verifyValue(true)
       }
       const uid = user.uid;
@@ -35,29 +57,31 @@ const Home = () => {
       .catch((error) => {
       });
   };
-  setTimeout(() => {
-    uValue(false);
-  }, 2000);
+
   return (
-    <Container>
-      {value ? (
-        <Alert variant="primary" className="text-center mt-5">
-          <h1>{state}</h1>
-        </Alert>
-      ) : (
-        ""
-      )}
+  <>
+    <Container fluid>
+    <Row><Col>
       {verify
       
       ?
-      <button onClick={handleOut}>Log Out</button>
+      <Row onPlay={notify2}>
+       {/* <ToastContainer /> */}
+        <Col lg={3}><Left username={userName} img={img} id={userId} email={email} time={time}/></Col>
+        <Col lg={6}><Middle/></Col>
+        <Col lg={3}><Right time={time} id={userId} img={img}/></Col>
+      </Row>
       :
       <>
-      <button onClick={handleOut}>Log Out</button>
-      <button >Please Verify</button>
+      <Button onClick={handleOut}>Log Out</Button>
+      <Button >Please Verify</Button>
       </>
       } 
+    </Col>
+    </Row>
     </Container>
+    </>
+      
   );
 };
 

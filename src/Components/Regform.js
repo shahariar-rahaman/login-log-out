@@ -7,7 +7,9 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  updateProfile,
 } from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database";
 const Regform = () => {
   let navigate = useNavigate();
   let [username, updateusername] = useState("");
@@ -20,7 +22,7 @@ const Regform = () => {
   let [errcpassword, errupdatecpassword] = useState("");
   let [mpassword, match] = useState("");
   let [loding, setLoding] = useState(false);
-  let [error,setError]=useState("")
+  let [error, setError] = useState("");
 
   function handleUserName(event) {
     updateusername(event.target.value);
@@ -51,30 +53,45 @@ const Regform = () => {
       const auth = getAuth();
       createUserWithEmailAndPassword(auth, email, password)
         .then((user) => {
-          console.log(user);
-          updateusername("");
-          errupdateusername("");
-          updateEmail("");
-          errupdateemail("");
-          updatePassword("");
-          errupdatepassword("");
-          updatecpassword("");
-          errupdatecpassword("");
-          sendEmailVerification(auth.currentUser).then(() => {
-         console.log("Mail Sent")
-          });
-          setLoding(false);
-          navigate("/login", { state: "Account Created Successfully" });
+          updateProfile(auth.currentUser, {
+            displayName: username,
+            photoURL:'https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg',
+          })
+            .then(() => {
+              const db = getDatabase();
+              set(ref(db, 'users/' + user.user.uid), {
+                name: username,
+                id: user.user.uid,
+                email: email,
+                photo: user.user.photoURL,
+                createdAt: Date()
+              })
+              
+              }).then(()=>{
+              updateusername("");
+              errupdateusername("");
+              updateEmail("");
+              errupdateemail("");
+              updatePassword("");
+              errupdatepassword("");
+              updatecpassword("");
+              errupdatecpassword("");
+              // sendEmailVerification(auth.currentUser).then(() => {
+              //    console.log("Mail Sent")
+              // });
+              setLoding(false);
+              navigate("/login", { state: "Account Created Successfully" });
+              }).catch((error) => {
+              const errorCode = error.code;
+              const errorMessage = error.message;
+              console.log(errorCode);
+              if (errorCode.includes("email")) {
+                setError("Email Already Used");
+                setLoding(false);
+              }
+            });
         })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          if(errorCode.includes("email")){
-          setError("Email Already Used")
-          setLoding(false)
-          }
-          
-        });
+        
     }
   }
   return (
@@ -105,14 +122,11 @@ const Regform = () => {
             placeholder="Enter email"
             value={email}
           />
-          {erremail ? 
-          (
+          {erremail ? (
             <Form.Text className="text-muted err">{erremail}</Form.Text>
-          ) : 
-          (
+          ) : (
             ""
-          )
-          }
+          )}
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -147,12 +161,11 @@ const Regform = () => {
           ) : (
             ""
           )}
-          {error
-          ?
-          <Form.Text className="text-muted err">{error}</Form.Text>
-          :
-          ""
-          }
+          {error ? (
+            <Form.Text className="text-muted err">{error}</Form.Text>
+          ) : (
+            ""
+          )}
         </Form.Group>
         <Button
           onClick={handelclick}

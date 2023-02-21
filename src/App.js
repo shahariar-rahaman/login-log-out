@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 function App() {
   return (
     <>
-      <BrowserRouter>
+      <BrowserRouter> 
         <Routes>
           <Route path="/" element={<Home />}></Route>
           <Route path="/registration" element={<Regform />}></Route>

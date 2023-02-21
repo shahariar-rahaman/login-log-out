@@ -1,3 +1,48 @@
 .err{
  color:red !important;
 }
+.left{
+    height:100vh;
+    background:yellow;
+}
+.middle{
+    height: 90vh;
+    background: greenyellow;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.right{
+    height: 100vh;
+    background: red;
+    padding-left: 10px;
+}
+.right h3{
+    color:white;
+    
+}
+.image{
+    width:50px;
+    border-radius: 10px;
+}
+.text{
+    font-size: 30px;
+    font-weight: bold;  
+}
+.round{
+    border-radius: 10px;
+}
+.brder{
+    border-top: 1px solid white;
+}
+.img{
+    margin-left: 50%;
+    transform: translate(-50%,10%);
+    width: 175px;
+    height: 175px;
+    border-radius: 50%;
+}
+.down{
+    margin-left: 50%;
+    margin-top: 10%;
+    transform: translate(-50%,10%);
+}

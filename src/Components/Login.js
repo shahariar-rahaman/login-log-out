@@ -26,8 +26,9 @@ const Login = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const { state } = useLocation();
+  const {state} = useLocation();
   const notify = () => toast(state);
+  console.log(state)
   const notify2 = () => toast("Mail Snet In Your Mail");
   if (value) {
     if (state) {
@@ -45,21 +46,24 @@ const Login = () => {
   const auth = getAuth();
   function handelclick(event) {
     event.preventDefault();
+    setLoding(true);
     if (currrntEmail == "") {
       errUpdateEmail("Please Write Email");
     } else if (currentPassword == "") {
       errUpdatePassword("Please Write Password");
     } else {
-      setLoding(true);
       signInWithEmailAndPassword(auth, currrntEmail, currentPassword)
         .then((user) => {
+          console.log(user)
           updateEmail("");
           updatePassword("");
+          setLoding(false);
           navigate("/", { state: "Login Successfully" });
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
+          setLoding(false);
         });
     }
   }
@@ -81,13 +85,23 @@ const Login = () => {
     .catch((error) => {
       const errorCode = error.code;
       const errorMessage = error.message;
-      // ..
+      
     });
   }
+  // const name=["skib","babu","siflu"]
+  // const [a,,c]=name
+  // console.log(a,c)
 
+// const name={
+// player: "Skaib",
+// student:"babu",
+// teacher: "MOT"
+// }
+// const {player}=name
+// console.log(player)
   return (
     <Container>
-      <ToastContainer />
+      <ToastContainer/>
       <Alert variant="primary" className="text-center mt-5">
         <h1>Login</h1>
       </Alert>
@@ -122,21 +136,26 @@ const Login = () => {
           ) : (
             ""
           )}
-        </Form.Group>
-        <Button
-          onClick={handelclick}
+          {loding ? (
+          <Button
           className="w-100"
           variant="primary"
           type="submit"
         >
-          {loding ? (
             <Spinner animation="border" role="status">
               <span className="visually-hidden">Loading...</span>
             </Spinner>
+            </Button>
           ) : (
-            "Login"
+            <Button
+          onClick={handelclick}
+          className="w-100"
+          variant="primary"
+          type="submit"
+        >Login</Button>
           )}
-        </Button>
+          </Form.Group>
+        
         <div className="text-center mt-3">
           <Form.Text id="passwordHelpBlock" muted>
             Already Have An Account?{" "}
@@ -173,7 +192,7 @@ const Login = () => {
               <Button variant="secondary" onClick={handleClose}>
                 Close
               </Button>
-              <Button variant="primary" onClick={handleClose,handleRestEmail}>
+              <Button variant="primary" onClick={handleRestEmail}>
                Reset
               </Button>
             </Modal.Footer>
